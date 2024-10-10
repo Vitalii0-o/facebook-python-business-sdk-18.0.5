@@ -141,8 +141,10 @@ class AbstractObject(collections_abc.MutableMapping):
             data = dict((k, self.export_value(v))
                         for k, v in data.items()
                         if v is not None)
+            time.sleep(0.5)
         elif isinstance(data, list):
             data = [self.export_value(v) for v in data]
+            time.sleep(0.5)
         return data
 
     def export_data(self):
@@ -152,7 +154,7 @@ class AbstractObject(collections_abc.MutableMapping):
         return self.export_all_data()
 
     def export_all_data(self):
-        time.sleep(0.5)
+
         return self.export_value(self._data)
 
     @classmethod
