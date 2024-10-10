@@ -152,7 +152,7 @@ class AbstractObject(collections_abc.MutableMapping):
         return self.export_all_data()
 
     def export_all_data(self):
-        time.sleep(5)
+        time.sleep(0.5)
         return self.export_value(self._data)
 
     @classmethod
