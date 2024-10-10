@@ -8,6 +8,7 @@ from facebook_business.exceptions import (
     FacebookBadObjectError,
 )
 from facebook_business.typechecker import TypeChecker
+import time
 
 try:
   # Since python 3
@@ -148,9 +149,11 @@ class AbstractObject(collections_abc.MutableMapping):
         """
         Deprecated. Use export_all_data() instead.
         """
+        time.sleep(0.5)
         return self.export_all_data()
 
     def export_all_data(self):
+
         return self.export_value(self._data)
 
     @classmethod
