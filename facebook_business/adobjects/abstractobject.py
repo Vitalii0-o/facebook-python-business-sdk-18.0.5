@@ -149,7 +149,7 @@ class AbstractObject(collections_abc.MutableMapping):
         """
         Deprecated. Use export_all_data() instead.
         """
-        time.sleep(0.5)
+        time.sleep(5)
         return self.export_all_data()
 
     def export_all_data(self):
