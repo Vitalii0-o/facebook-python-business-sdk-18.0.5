@@ -1,5 +1,6 @@
 # Copyright (c) Meta Platforms, Inc. and affiliates.
 # All rights reserved.
+import time
 
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
@@ -297,46 +298,52 @@ class FacebookAdsApi(object):
             params = _top_level_param_json_encode(params)
 
         # Get request response and encapsulate it in a FacebookResponse
-        if method in ('GET', 'DELETE'):
-            response = self._session.requests.request(
-                method,
-                path,
-                params=params,
-                headers=headers,
-                files=files,
-                timeout=self._session.timeout
+        while True:
+            if method in ('GET', 'DELETE'):
+                response = self._session.requests.request(
+                    method,
+                    path,
+                    params=params,
+                    headers=headers,
+                    files=files,
+                    timeout=self._session.timeout
+                )
+
+            else:
+                response = self._session.requests.request(
+                    method,
+                    path,
+                    data=params,
+                    headers=headers,
+                    files=files,
+                    timeout=self._session.timeout
+                )
+            if self._enable_debug_logger:
+                import curlify
+                print(curlify.to_curl(response.request))
+            fb_response = FacebookResponse(
+                body=response.text,
+                headers=response.headers,
+                http_status=response.status_code,
+                call={
+                    'method': method,
+                    'path': path,
+                    'params': params,
+                    'headers': headers,
+                    'files': files,
+                },
             )
 
-        else:
-            response = self._session.requests.request(
-                method,
-                path,
-                data=params,
-                headers=headers,
-                files=files,
-                timeout=self._session.timeout
-            )
-        if self._enable_debug_logger:
-            import curlify
-            print(curlify.to_curl(response.request))
-        fb_response = FacebookResponse(
-            body=response.text,
-            headers=response.headers,
-            http_status=response.status_code,
-            call={
-                'method': method,
-                'path': path,
-                'params': params,
-                'headers': headers,
-                'files': files,
-            },
-        )
+            if fb_response.is_failure():
+                if fb_response.json()['error']['code'] == 17:
+                    print("User request limit reached, sleep 180 sec and try again.")
+                    time.sleep(180)
+                    continue
+                else:
+                    raise fb_response.error()
 
-        if fb_response.is_failure():
-            raise fb_response.error()
-
-        self._num_requests_succeeded += 1
-        return fb_response
+            self._num_requests_succeeded += 1
+            return fb_response
 
     def new_batch(self):
         """
