@@ -337,7 +337,7 @@ class FacebookAdsApi(object):
             if fb_response.is_failure():
                 if fb_response.json()['error']['code'] == 17:
                     print("User request limit reached, sleep 180 sec and try again.")
-                    time.sleep(180)
+                    time.sleep(300)
                     continue
                 else:
                     raise fb_response.error()
