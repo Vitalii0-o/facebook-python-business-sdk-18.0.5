@@ -342,6 +342,7 @@ class FacebookAdsApi(object):
                 else:
                     raise fb_response.error()
             print(fb_response.json())
+            time.sleep(30)
             self._num_requests_succeeded += 1
             return fb_response
 
