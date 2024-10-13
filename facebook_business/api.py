@@ -341,7 +341,7 @@ class FacebookAdsApi(object):
                     continue
                 else:
                     raise fb_response.error()
-
+            print(fb_response.json())
             self._num_requests_succeeded += 1
             return fb_response
 
