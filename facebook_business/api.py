@@ -341,9 +341,12 @@ class FacebookAdsApi(object):
                     continue
                 else:
                     raise fb_response.error()
-            print(fb_response.json())
-
-            if fb_response.json()['summary']['total_count'] > 300:
+            response_json = fb_response.json()
+            print(response_json)
+            if 'summary' in response_json and 'total_count' in response_json['summary']:
+                total_count = response_json['summary']['total_count']
+                if total_count > 300:
+                    print(f"Total count is greater than 300: {total_count}")
                 time.sleep(30)
             self._num_requests_succeeded += 1
             return fb_response
